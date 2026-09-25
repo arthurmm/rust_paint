@@ -12,6 +12,7 @@ pub struct PaintApp {
     strokes: Vec<PaintStroke>,
     active_tool: PaintTool,
     tool_settings: ToolSettings,
+    frames: u32,
 }
 
 impl Default for PaintApp {
@@ -20,6 +21,7 @@ impl Default for PaintApp {
             strokes: Vec::new(),
             active_tool: PaintTool::default(),
             tool_settings: ToolSettings::default(),
+            frames: 0,
         }
     }
 }
@@ -60,6 +62,12 @@ impl PaintApp {
 
 impl eframe::App for PaintApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        self.frames += 1;
+        if self.frames == 1 {
+            egui::CentralPanel::default().show(ctx, |_| {});
+            ctx.request_repaint();
+            return;
+        }
         
         egui::TopBottomPanel::top("toolbar").show(ctx, |ui| {
             ui.heading("Rust Paint");
@@ -81,8 +89,8 @@ impl eframe::App for PaintApp {
 
         egui::CentralPanel::default().show(ctx, |ui| {
             // let (response, painter) = ui.allocate_painter(ui.available_size(), Sense::drag());
-            // let size = ui.available_size().max(egui::vec2(600.0, 400.0));
-            let size = egui::vec2(600.0, 400.0);
+            let size = ui.available_size().max(egui::vec2(600.0, 400.0));
+            // let size = egui::vec2(600.0, 400.0);
             let (response, painter) = ui.allocate_painter(size, Sense::drag());
 
             // Fundo branco
